@@ -1,0 +1,29 @@
+これヘルプファイル
+
+get:
+	GET [column_name] FROM table_name [where_expression [where_expression]] [limit_expression] [offset_expression]
+count:
+	COUNT [column_name] FROM table_name [where_expression [where_expression]] [limit_expression] [offset_expression]
+put:
+	PUT tablename where_expression [where_expression]
+	*It is indispensable to specify rowkey.
+delete:
+	DELETE FROM table_name where_expression [where_expression]
+
+expression:
+	where_expression:
+		column_name(=|<|>|<=|>=)value
+	limit_expression:
+		LIMIT=fixnum
+	offset_expression:
+		OFFSET=fixnum
+
+set view:
+	SET VIEW (line|table)
+set process:
+	SET PROCESS (normal|mapreduce)
+	
+exit:
+	EXIT
+help:
+	HELP

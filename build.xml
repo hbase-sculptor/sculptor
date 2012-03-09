@@ -1,0 +1,106 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<project name="sculptor" default="sample-jar" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="build" />
+    <property name="version" value="0.0.1" />
+     
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+        <ivy:retrieve/>
+    </target>    
+    
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete quiet="true" includeemptydirs="true">
+            <fileset dir="${build.dir}">
+                </fileset>
+        </delete>
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}/framework/classes" />
+        <mkdir dir="${build.dir}/sample/classes" />
+    </target>
+        
+  <target name="framework-compile" depends="clean,resolve">
+    <javac 
+     encoding="UTF-8" 
+     srcdir="framework/src"
+     destdir="${build.dir}/framework/classes"
+     debug="true">
+        <classpath>
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+        </classpath>
+    </javac>
+  </target>
+
+  <target name="framework-jar" depends="framework-compile" description="Making sculptor-${version}.jar">
+      <jar jarfile="sculptor-${version}.jar"
+          basedir="${build.dir}/framework/classes">
+    </jar>
+  </target>
+
+  <target name="sample-compile" depends="framework-jar">
+    <javac 
+     encoding="UTF-8" 
+     srcdir="sample/src"
+     destdir="${build.dir}/sample/classes"
+     debug="true">
+        <classpath>
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+            <fileset dir="./">
+                <include name="*.jar" />
+            </fileset>
+        </classpath>
+    </javac>
+  </target>
+
+  <target name="sample-jar" depends="sample-compile" description="Making sculptor-sample-${version}.jar">
+      <jar jarfile="sculptor-sample-${version}.jar"
+          basedir="${build.dir}/sample/classes">
+    </jar>
+  </target>
+
+  <!-- javadoc target -->
+  <target name="javadoc" depends="clean">
+    <javadoc destdir="./javadoc"
+      encoding="UTF-8"
+      version="true"
+      docencoding="UTF-8"
+      charset="UTF-8"
+      access="public">
+        <classpath>
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+        </classpath>
+        <sourcepath path="framework/src" />
+        <package name="sculptor.*" />
+    </javadoc>
+  </target>
+
+</project>
