@@ -19,8 +19,10 @@
 <ivy-module version="2.2">
     <info organisation="sculptor" module="sclptor"/>
     <dependencies>
-      <dependency org="org.apache.hadoop" name="hadoop-core" rev="1.0.0" transitive="false"/>
+        <dependency org="org.apache.hadoop" name="hadoop-core" rev="1.0.0" transitive="false"/>
         <dependency org="org.apache.hbase" name="hbase" rev="0.90.4" transitive="false"/>
         <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.3.3" transitive="false"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.5" transitive="false"/>
+        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false"/>
     </dependencies>
 </ivy-module>
