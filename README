@@ -1,3 +1,40 @@
 Sculptor is a framework and command line interface that makes using Apache HBase much easier.
 
 Please see the doc at the wiki page.
+
+== Pre-requirements ==
+- Apache Ivy is required to build Sculptor
+- Apache HBase installed
+- Hadoop MapReduce (Sculptor MapReduce mode only)
+
+== Build ==
+$ cd sculptor
+$ ant 
+
+== Run Sculptor ==
+1. Copy sculptor folder to your HBase client
+
+2. Edit $SCULPTOR_HOME/sculptor, change HBASE_HOME variable to fit your environment
+
+3. For Sculptor MapReduce mode only, get your environment ready to run customized MapReduce jobs over HBase.
+   This usually requires the following steps:
+     - Add HBase and ZooKeeper jars to Hadoop classpath by:
+       $ echo "export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.9x.jar:$HBASE_HOME/lib/zookeeper-3.x.y.jar" >> hadoop-env.sh
+     - Let Hadoop know where HBase is running
+       $ ln -s $HBASE_HOME/conf/hbase-site.xml $HADOOP_HOME/conf/hbase-site.xml
+     - Add sculptor-sample.jar to Hadoop classpath.
+       The easiest way to do this is to drop sculptor-sample.jar to $HADOOP_HOME/lib directory.
+     - Sync the above changes across the cluster
+     - Restart Hadoop MapReduce
+
+4. Start Sculptor
+   $ sh $SCULPTOR_HOME/sculptor
+   sculptor> help
+
+5. To initialize and run the sample
+   $ sh $SCULPTOR_HOME/sculptor sample
+   sculptor> get from sc_item_data limit=1
+
+6. Run ad-hoc MapReduce via Sculptor
+   sculptor> set process mapreduce
+   sculptor> get from sc_item_data item_id>100

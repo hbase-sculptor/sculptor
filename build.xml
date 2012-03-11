@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="sculptor" default="sample-jar" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="sculptor" default="sample-test-jar" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- some variables used -->
     <property name="lib.dir" value="lib" />
     <property name="build.dir" value="build" />
@@ -42,48 +42,71 @@
         <mkdir dir="${build.dir}/sample/classes" />
     </target>
         
-  <target name="framework-compile" depends="clean,resolve">
-    <javac 
-     encoding="UTF-8" 
-     srcdir="framework/src"
-     destdir="${build.dir}/framework/classes"
-     debug="true">
-        <classpath>
-            <fileset dir="${lib.dir}">
-                <include name="**/*.jar" />
-            </fileset>
-        </classpath>
-    </javac>
-  </target>
+    <target name="framework-compile" depends="clean,resolve">
+        <javac 
+         encoding="UTF-8" 
+         srcdir="framework/src"
+         destdir="${build.dir}/framework/classes"
+         debug="true">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
 
-  <target name="framework-jar" depends="framework-compile" description="Making sculptor-${version}.jar">
-      <jar jarfile="sculptor-${version}.jar"
-          basedir="${build.dir}/framework/classes">
-    </jar>
-  </target>
+    <target name="framework-jar" depends="framework-compile" description="Making sculptor-${version}.jar">
+        <jar jarfile="sculptor-${version}.jar"
+             basedir="${build.dir}/framework/classes">
+        </jar>
+    </target>
 
-  <target name="sample-compile" depends="framework-jar">
-    <javac 
-     encoding="UTF-8" 
-     srcdir="sample/src"
-     destdir="${build.dir}/sample/classes"
-     debug="true">
-        <classpath>
-            <fileset dir="${lib.dir}">
-                <include name="**/*.jar" />
-            </fileset>
-            <fileset dir="./">
-                <include name="*.jar" />
-            </fileset>
-        </classpath>
-    </javac>
-  </target>
+    <target name="sample-compile" depends="framework-jar">
+        <javac 
+         encoding="UTF-8" 
+         srcdir="sample/src"
+         destdir="${build.dir}/sample/classes"
+         debug="true">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar" />
+                </fileset>
+                <fileset dir="./">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
 
-  <target name="sample-jar" depends="sample-compile" description="Making sculptor-sample-${version}.jar">
-      <jar jarfile="sculptor-sample-${version}.jar"
-          basedir="${build.dir}/sample/classes">
-    </jar>
-  </target>
+    <target name="sample-jar" depends="sample-compile" description="Making sculptor-sample-${version}.jar">
+        <jar jarfile="sculptor-sample-${version}.jar"
+              basedir="${build.dir}/sample/classes">
+        </jar>
+    </target>
+
+    <target name="sample-test-compile" depends="sample-compile" description="Compiling sculptor sample test source">
+        <javac 
+         encoding="UTF-8" 
+         srcdir="sample/test"
+         destdir="${build.dir}/sample/classes"
+         debug="true">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar" />
+                </fileset>
+                <fileset dir="./">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="sample-test-jar" depends="sample-test-compile" description="Making sculptor-sample-${version}.jar with test source">
+        <jar jarfile="sculptor-sample-${version}.jar"
+              basedir="${build.dir}/sample/classes">
+        </jar>
+    </target>
 
   <!-- javadoc target -->
   <target name="javadoc" depends="clean">

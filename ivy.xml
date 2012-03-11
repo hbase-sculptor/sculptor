@@ -24,5 +24,7 @@
         <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.3.3" transitive="false"/>
         <dependency org="commons-lang" name="commons-lang" rev="2.5" transitive="false"/>
         <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false"/>
+        <dependency org="log4j" name="log4j" rev="1.2.16" transitive="false"/>
+        <dependency org="junit" name="junit" rev="4.10" transitive="false"/>
     </dependencies>
 </ivy-module>

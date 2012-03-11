@@ -22,13 +22,35 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-HADOOP_HOME=/usr/local/hadoop/current
 HBASE_HOME=/usr/local/hbase/current
+export HBASE_CLASSPATH=$HBASE_CLASSPATH:$bin/sculptor-0.0.1.jar:$bin/sculptor-sample-0.0.1.jar
 
+function init_and_run_sample() 
+{
+    # create sample sc_item_data table
+    echo "Creating sample table in HBase..."
+    echo "create 'sc_item_data', {NAME => 'data', VERSIONS => '1'}, {NAME => 'meta', VERSIONS => '1'}" | $HBASE_HOME/bin/hbase shell
+    echo ""
+    echo "Created sample table: sc_item_data"
+
+    # load data into the table
+    echo "Loading test data into sample table..."
+    $HBASE_HOME/bin/hbase sculptor.sample.HItemDataTest loaddata $bin/sample/test/data/sc_item_data.tsv
+
+    # start sculptor
+    ${HBASE_HOME}/bin/hbase org.jruby.Main ${bin}/framework/ruby/sculptor.rb
+}
+
+
+## main routine
 case $1 in
 -e )
-${HADOOP_HOME}/bin/hadoop jar ${HBASE_HOME}/lib/jruby-complete-1.6.0.jar ${bin}/framework/ruby/sculptor.rb $2
-;;
+    ${HBASE_HOME}/bin/hbase org.jruby.Main ${bin}/framework/ruby/sculptor.rb $2
+    ;;
+sample )
+    init_and_run_sample
+    ;;
 *  )
-${HADOOP_HOME}/bin/hadoop jar ${HBASE_HOME}/lib/jruby-complete-1.6.0.jar ${bin}/framework/ruby/sculptor.rb
+    ${HBASE_HOME}/bin/hbase org.jruby.Main ${bin}/framework/ruby/sculptor.rb
 esac
+
