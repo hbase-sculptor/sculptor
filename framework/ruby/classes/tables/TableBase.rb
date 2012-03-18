@@ -395,7 +395,7 @@ class ClassInfo
   #===コンストラクタ
   #
   def initialize(hClassDescriptor)
-    @className=(hClassDescriptor.getClassName());
+    @className=(hClassDescriptor.getEntityClassName());
     @table=(hClassDescriptor.getTable());
 
     fields = hClassDescriptor.gethFieldDescriptors();

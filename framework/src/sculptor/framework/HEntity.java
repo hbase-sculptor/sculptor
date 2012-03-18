@@ -46,7 +46,7 @@ public class HEntity implements Serializable {
 	 */
 	public static HClassDescriptor getClassInfo(Class<? extends HEntity> clazz) {
 		HClassDescriptor hClassDescriptor = new HClassDescriptor();
-		hClassDescriptor.className = clazz.getCanonicalName();
+		hClassDescriptor.entityClassName = clazz.getCanonicalName();
 		hClassDescriptor.table = clazz.getAnnotation(Table.class).name();
 		hClassDescriptor.hFieldDescriptors = getFields(clazz);
 

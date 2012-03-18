@@ -24,20 +24,31 @@ import java.util.List;
  *
  */
 public class HClassDescriptor {
-	/** クラス名 */
-	String className;
+	/** Client class name */
+	String clientClassName;
+	/** Entity class name */
+	String entityClassName;
 	/** 紐づいているテーブル名 */
 	String table;
 	/** フィールドのリスト */
 	List<HFieldDescriptor> hFieldDescriptors;
 
 	/**
-	 * Get the canonical name
+	 * Get entity's canonical name.
 	 * 
-	 * @return the canonical name
+	 * @return the entity's canonical name
 	 */
-	public String getClassName() {
-		return className;
+	public String getEntityClassName() {
+		return entityClassName;
+	}
+	
+	/**
+	 * Get client's canonical name.
+	 * 
+	 * @return the client's canonical name
+	 */
+	public String getClientClassName() {
+		return clientClassName;
 	}
 
 	/**

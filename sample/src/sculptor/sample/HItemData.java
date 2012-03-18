@@ -40,6 +40,7 @@ import sculptor.framework.HClient;
 import sculptor.framework.HCompareOp;
 import sculptor.framework.HScanner;
 import sculptor.framework.PutWrapper;
+import sculptor.framework.annotation.Table;
 import sculptor.framework.util.ByteArray;
 
 /**
@@ -49,6 +50,7 @@ import sculptor.framework.util.ByteArray;
  * Note: this class is NOT thread safe
  * 
  */
+@Table(name = "sc_item_data")
 public class HItemData extends HClient<ItemData> {
     /** 店舗IDの長さ（32進） */
     static final int SIZE_OF_SHOP_ID_32 = 5;

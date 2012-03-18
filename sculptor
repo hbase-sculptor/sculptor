@@ -23,7 +23,19 @@ bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
 HBASE_HOME=/usr/local/hbase/current
-export HBASE_CLASSPATH=$HBASE_CLASSPATH:$bin/sculptor-0.0.1.jar:$bin/sculptor-sample-0.0.1.jar
+HBASE_CLASSPATH=$HBASE_CLASSPATH:$bin/sculptor-0.0.1.jar
+
+# add user defined libraries
+if [ -z "$SCULPTOR_AUXLIB_PATH" ]; then
+    auxlib_path=$bin/auxlib
+else
+    auxlib_path=$SCULPTOR_AUXLIB_PATH
+fi
+for jar in $auxlib_path/*.jar
+do
+    HBASE_CLASSPATH=$HBASE_CLASSPATH:$jar
+done
+export HBASE_CLASSPATH=$HBASE_CLASSPATH
 
 function init_and_run_sample() 
 {

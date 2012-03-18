@@ -40,6 +40,7 @@
         <mkdir dir="${build.dir}" />
         <mkdir dir="${build.dir}/framework/classes" />
         <mkdir dir="${build.dir}/sample/classes" />
+        <mkdir dir="auxlib" />
     </target>
         
     <target name="framework-compile" depends="clean,resolve">
@@ -80,7 +81,7 @@
     </target>
 
     <target name="sample-jar" depends="sample-compile" description="Making sculptor-sample-${version}.jar">
-        <jar jarfile="sculptor-sample-${version}.jar"
+        <jar jarfile="auxlib/sculptor-sample-${version}.jar"
               basedir="${build.dir}/sample/classes">
         </jar>
     </target>
@@ -103,7 +104,7 @@
     </target>
 
     <target name="sample-test-jar" depends="sample-test-compile" description="Making sculptor-sample-${version}.jar with test source">
-        <jar jarfile="sculptor-sample-${version}.jar"
+        <jar jarfile="auxlib/sculptor-sample-${version}.jar"
               basedir="${build.dir}/sample/classes">
         </jar>
     </target>

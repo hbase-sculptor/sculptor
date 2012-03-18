@@ -74,7 +74,7 @@ public abstract class HClient<D> implements Closeable {
 	public static final String SCAN_MR_OUTPUT = "sculptor.scanMR.output";
 	public static final String SCAN_MR_OFFSET = "sculptor.scanMR.offset";
 	public static final String SCAN_MR_LIMIT = "sculptor.scanMR.limit";
-	public static final String SCAN_MR_TABLE = "sculptor.scanMR.table";
+	public static final String SCAN_MR_CLIENT = "sculptor.scanMR.client";
 	
 	protected String MROutput;
 	static final Text EMPTY_TEXT = new Text("");
@@ -116,31 +116,7 @@ public abstract class HClient<D> implements Closeable {
 	public HClient(String tableName) {
 		this(tableName, null);
 	}
-	
-	/**
-	 * Create hclient instance.
-	 * 
-	 * @param tableName the table name
-	 * @param countryCode country code
-	 * @return hclient instance
-	 */
-	public static HClient create(String table) throws IOException {
-	    // TODO get class name from modules
-	    String clazz = "sculptor.sample.HItemData";
-	    try {
-	        
-	        Class c = Class.forName(clazz);
-	        // TODO
-//	        if (! (c.isAssignableFrom(HClient.class))) {
-//	            throw new IllegalArgumentException(clazz + " is not a sub class of HClient for table: " + table);
-//	        }
-	        return (HClient) c.newInstance();
-	        
-	    } catch (Exception e) {
-	        throw new IOException("can not create HClient instance for table: " + table, e);
-	    }
-	}
-	
+		
 	/**
 	 * この接続の設定情報を取得
 	 * 
@@ -351,7 +327,7 @@ public abstract class HClient<D> implements Closeable {
         conf.set(SCAN_MR_LIMIT, String.valueOf(limit));
         
         // for reducer
-        conf.set(SCAN_MR_TABLE, tableName);
+        conf.set(SCAN_MR_CLIENT, Sculptor.descriptors.get(tableName).clientClassName);
 
         boolean jobResult = job.waitForCompletion(true);
         
@@ -521,8 +497,13 @@ public abstract class HClient<D> implements Closeable {
 			_ubound = _offset + _limit;
 			
 			// the client
-			String table = conf.get(SCAN_MR_TABLE);
-			_hclient = HClient.create(table);
+			String client = conf.get(SCAN_MR_CLIENT);
+			try {
+				Class clientClass = Class.forName(client);
+				_hclient = (HClient) clientClass.newInstance();
+			} catch (Exception e) {
+				throw new IOException("Can not create HClient instance.", e);
+			}
 		}
 
 		@Override
