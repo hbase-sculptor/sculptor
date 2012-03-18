@@ -147,19 +147,6 @@ class Util
   end
 
   #
-  #===データクラスの名前を取得する
-  #
-  #==== args
-  #tableClassName :: テーブルを表すクラスの名前
-  #==== return
-  #データクラス名
-  def self.getDataClassName(tableClassName)
-    dataClassName = Marshal.load(Marshal.dump(tableClassName));
-    dataClassName[0, 1] = "";
-    return dataClassName;
-  end
-
-  #
   #===rubyオブジェクトをJavaオブジェクトに変換
   #
   #==== args

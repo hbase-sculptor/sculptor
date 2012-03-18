@@ -18,8 +18,6 @@
 # limitations under the License.
 #
 
-require CLAASES_DIR + "TableMap.rb";
-
 #
 #=HBaseClientのコマンドを定義する
 #
@@ -33,8 +31,7 @@ class Command
   #query :: Query
   #tableName :: テーブル名
   def execute(query, tableName)
-    tableClassName = TableMap.getTableClassName(tableName);
-    clazz = TableBase.new(tableClassName, query);
+    clazz = TableBase.new(tableName, query);
 
     operation = query.operation();
 

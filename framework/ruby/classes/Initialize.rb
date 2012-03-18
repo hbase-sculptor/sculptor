@@ -22,7 +22,7 @@ require 'java'
 require 'pp'
 
 #libディレクトリのパス
-LIB_DIR = $basePath + "/../../lib/";
+LIB_DIR = $SCULPTOR_ROOT + "/lib/";
 #classesディレクトリのパス
 CLAASES_DIR = $basePath + "/classes/";
 #constディレクトリのパス
@@ -34,27 +34,16 @@ DOC_DIR = $basePath + "/doc/";
 
 #apacheパッケージ
 APACHE_PACKAGE = "org.apache.";
-#data store package
-#TODO should read tables automatically
-DATASTORE_PACKAGE = "sculptor.sample";
 
 require CLAASES_DIR + 'common/String.rb'
 require CLAASES_DIR + 'commands/CommandHistory.rb';
 
-sculptorJar = "";
 #LIB_DIR直下のjarファイルをぜんぶrequire
 Dir::entries(LIB_DIR).each do |jarFile|
   if (jarFile.endsWith(".jar"))
     require LIB_DIR + jarFile;
   end
 end
-
-# require sculptor.jar
-require $basePath + "/../../sculptor-0.0.1.jar"
-
-# TODO read from modules
-sculptorJar = $basePath + "/../../sculptor-sample-0.0.1.jar"
-require sculptorJar
 
 require CLAASES_DIR + 'Util.rb'
 require CLAASES_DIR + 'Query.rb'
@@ -75,9 +64,7 @@ eputs $title;
 
 import 'sculptor.framework.HCompareOp'
 import 'sculptor.framework.util.ClassUtils'
-
-tableClassNameList = ClassUtils.getJavaClasses(DATASTORE_PACKAGE, sculptorJar);
-eputs "テーブルを読み込んでいます...";
+import 'sculptor.framework.Sculptor'
 
 #できるだけグローバルなんは避けたいけど、とりあえず
 # 表示モード。デフォルトはline
@@ -93,39 +80,22 @@ org.apache.log4j.Logger.getLogger("sculptor").setLevel(log_level)
 $tableNameList = [];
 $fieldNameList = [];
 $fieldNameHash = Hash.new;
-tableClassNameList.each do |tableClassName|
 
-  begin
-    tClassName = tableClassName.sub(DATASTORE_PACKAGE + ".", "");
+# Initialize table -> entity -> client mapping
+Sculptor.initialize($SCULPTOR_ROOT)
 
-    unless (tClassName.startsWith("H"))
-      import DATASTORE_PACKAGE + "." + tClassName;
-      tbObj = self.class.const_get(tClassName).new();
-      tableClassInfo = tbObj.getClassInfo();
-
-      tableName = tableClassInfo.getTable();
-      puts tableName;
-
-      $tableNameList << tableName;
-
-      tableClassFieldInfoList = tableClassInfo.gethFieldDescriptors();
-      tableClassFieldInfoList.each do |tableClassFieldInfo|
+# Initialize tables from entities
+# tableClassNameList = ClassUtils.getJavaClasses(DATASTORE_PACKAGE, sculptorJar);
+for table in Sculptor.descriptors.keySet()
+    eputs "Loading " + table + "...";
+    $tableNameList << table;
+    descriptor = Sculptor.descriptors.get(table);
+    tableClassFieldInfoList = descriptor.gethFieldDescriptors();
+    tableClassFieldInfoList.each do |tableClassFieldInfo|
         tableClassFieldName = tableClassFieldInfo.getQualifier();
-        $fieldNameList << tableClassFieldName;
-      end
-      $fieldNameHash[tableName] = $fieldNameList;
+    $fieldNameList << tableClassFieldName;
     end
-  rescue NativeException => e
-            pp e;
-  rescue NoMethodError => e
-            pp e;
-  rescue ArgumentError => e
-            pp e;
-  rescue NameError => e
-            pp e.backtrace;
-  rescue TypeError => e
-            pp e;
-  rescue
-  end
+    $fieldNameHash[table] = $fieldNameList;
 end
+
 $tableNameList = $tableNameList.uniq();

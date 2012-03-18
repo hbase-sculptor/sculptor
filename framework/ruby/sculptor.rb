@@ -34,6 +34,9 @@ EOS
 #このスクリプトのベースディレクトリ
 $basePath =  File::dirname(__FILE__);
 
+# sculptor root
+$SCULPTOR_ROOT = $basePath + '/../..'
+
 # 初期設定
 require $basePath + '/classes/Initialize.rb'
 
@@ -83,7 +86,7 @@ while (true)
         #className = query.operation().downcase.gsub(/\b\w/) { |word| word.upcase };
 
         # 呼び出すテーブルクラスの名前を生成
-        tableName = query.tableName().downcase.toCamel();
+        tableName = query.tableName().downcase;
 
         obj = Command.new();
         obj.execute(query, tableName);

@@ -37,25 +37,20 @@ class TableBase
 
   @query = nil;
 
-  @tableClassName = "";
+  @tableName = "";
 
   public
   #
   #===コンストラクタ
   #
-  def initialize(tableClassName, query)
-
+  def initialize(tableName, query)
+    @tableName = tableName;
     @query = query;
-    @conditionHash = Hash.new;
-
-    @tableClassName = tableClassName;
+    @conditionHash = Hash.new
 
     # 結果データを保持するJavaクラス
     begin
-      dataClass = Util.getDataClassName(@tableClassName);
-      import DATASTORE_PACKAGE + "." + dataClass;
-      import DATASTORE_PACKAGE + "." + tableClassName;
-      @dataCls = self.class.const_get(dataClass).new();
+      @dataCls = Sculptor.entities.get(tableName).newInstance(); 
 
       clazz = @dataCls.getClassInfo();
 
@@ -75,12 +70,7 @@ class TableBase
   #==== return
   #データアクセスクラス
   def getInstance()
-    #		if (@client == nil)
-    # new connection"
-    @client = self.class.const_get(@tableClassName).new();
-    #		else
-    #			# pooled connection
-    #		end
+    @client = Sculptor.clients.get(@tableName).newInstance();
     return @client;
   end
 
@@ -349,8 +339,7 @@ class TableBase
       eval("@" + fieldInfo.fieldName() + " = nil");
     end
 
-    dataClass = Util.getDataClassName(@tableClassName);
-    @dataCls = self.class.const_get(dataClass).new();
+    @dataCls = Sculptor.entities.get(@tableName).newInstance();
 
   end
 

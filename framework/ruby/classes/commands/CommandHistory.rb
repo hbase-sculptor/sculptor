@@ -78,7 +78,7 @@ class CommandHistory
     userCommandHistoryFile = userHomeDir + COMMAND_HISTORY_DIR + COMMAND_HISTORY_FILE;
 
     if (File.exist?(userCommandHistoryFile))
-      eputs "コマンド履歴を読み込んでいます...";
+      eputs "Loading command history...";
       commandHistoryArray = [];
       Pathname.new(userCommandHistoryFile).open("rb") do |f|
         commandHistoryArray = Marshal.load(f);
