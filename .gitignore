@@ -2,6 +2,7 @@
 *.jar
 *.class
 lib
+auxlib
 build
 framework/lib
 framework/.classpath
