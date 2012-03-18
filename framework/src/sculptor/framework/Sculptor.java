@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import sculptor.framework.annotation.Table;
 
 /**
- * Factory class for creating HClient instances.
+ * The bootstrap class.
  * 
  */
 public class Sculptor {
@@ -106,14 +106,6 @@ public class Sculptor {
 		} catch (Exception e) {
 			log.error("Can not initialize Sculptor.", e);
 			throw e;
-		}
-	}
-
-	public static void main(String[] args) {
-		try {
-			initialize("/Users/uprush/repo/sculptor");
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }

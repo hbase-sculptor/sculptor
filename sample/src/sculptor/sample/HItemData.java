@@ -26,7 +26,6 @@ import java.util.NavigableMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -45,7 +44,7 @@ import sculptor.framework.util.ByteArray;
 
 /**
  * 
- * HBase上のsc_item_data関連処理
+ * The client class for sc_item_data table in HBase.
  * 
  * Note: this class is NOT thread safe
  * 
@@ -124,6 +123,11 @@ public class HItemData extends HClient<ItemData> {
 		return rowKey;
 	}
 
+	@Override
+	public byte[] toRowkey(ItemData d) {
+		return encodeRowkey(d.shopID, d.itemID);
+	}
+
 	/**
 	 * row keyを文字列にdecode
 	 * 
@@ -146,49 +150,6 @@ public class HItemData extends HClient<ItemData> {
 		long itemID = ByteArray.toDecimal(bItemID);
 
 		return String.format("%d-%d", shopID, itemID);
-	}
-
-	/**
-	 * HBaseのsc_item_dataから、商品データを取得。
-	 * 
-	 * @param shopID
-	 *            店舗ID
-	 * @param itemID
-	 *            商品ID。
-	 * 
-	 * @return 該当商品データ
-	 */
-	public ItemData get(int shopID, int itemID) throws IOException {
-		String[] families = new String[] { "data" };
-		return get(shopID, itemID, families);
-	}
-
-	/**
-	 * HBaseのsc_item_dataから、商品データを取得。
-	 * 
-	 * @param shopID
-	 *            店舗ID
-	 * @param itemID
-	 *            商品ID。
-	 * @param families
-	 *            column families
-	 * 
-	 * @return 該当商品データ
-	 */
-	public ItemData get(int shopID, int itemID, String[] families)
-			throws IOException {
-		byte[] rowkey = encodeRowkey(shopID, itemID);
-		if (rowkey == null || rowkey.length == 0) {
-			return null;
-		}
-		Get g = new Get(rowkey);
-		for (String family : families) {
-			byte[] bFamily = Bytes.toBytes(family);
-			g.addFamily(bFamily);
-		}
-		g.setMaxVersions();
-		Result r = table.get(g);
-		return toDataStore(r);
 	}
 
 	@Override
@@ -336,7 +297,7 @@ public class HItemData extends HClient<ItemData> {
 	 *            row in HBase
 	 * @return 商品情報
 	 */
-	public ItemData toDataStore(Result r) {
+	public ItemData toEntity(Result r) {
 		if (r == null || r.isEmpty()) {
 			return null;
 		}
@@ -414,21 +375,6 @@ public class HItemData extends HClient<ItemData> {
 		ResultScanner rs = table.getScanner(s);
 		return new ItemDataScanner(this, rs);
 	}
-
-	@Override
-	public ItemData get(ItemData d) throws IOException {		
-		String[] families = new String[] {"data", "meta"};
-		return get(d.shopID, d.itemID, families);
-	}
-
-
-
-	@Override
-	public void delete(ItemData d) throws IOException {
-		byte[] rowkey = encodeRowkey(d.shopID, d.itemID);
-		delete(rowkey);
-	}
-
 
 
 	// ######## inner class ##########

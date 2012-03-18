@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -57,7 +58,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  *
  * @param <D> data store
  */
-public abstract class HClient<D> implements Closeable {
+public abstract class HClient<D extends HEntity> implements Closeable {
 	
 	protected String tableName;
 	protected HTable table;
@@ -68,8 +69,6 @@ public abstract class HClient<D> implements Closeable {
 	
 	private Configuration thatConfig;
 
-	final byte[] DATA_FAMILY = Bytes.toBytes("data");
-	
 	// some key for MR
 	public static final String SCAN_MR_OUTPUT = "sculptor.scanMR.output";
 	public static final String SCAN_MR_OFFSET = "sculptor.scanMR.offset";
@@ -165,7 +164,7 @@ public abstract class HClient<D> implements Closeable {
 		g.addFamily(family);
 		g.setMaxVersions();
 		Result r = table.get(g);
-		return toDataStore(r);
+		return toEntity(r);
 	}
 	
 	/**
@@ -226,24 +225,29 @@ public abstract class HClient<D> implements Closeable {
 		return op;
 	}
 	
-	/**
-	 * "data" family の一行を取得。
-	 * 
-	 * @param rowkey row key
-	 * @return 一行
-	 * @throws IOException
-	 */
-	public D get(byte[] rowkey) throws IOException {
-		return get(rowkey, DATA_FAMILY);
-	}
-
+	public abstract byte[] toRowkey(D d);
+	
 	/**
 	 * get one row via D
 	 * 
 	 * @param d data store entity
 	 * @return the row
 	 */
-	public abstract D get(D d) throws IOException;
+	public D get(D d) throws IOException {
+		byte[] rowkey = toRowkey(d);
+		if (rowkey == null || rowkey.length == 0) {
+			return null;
+		}
+		Get g = new Get(rowkey);
+		Set<String> families = HEntity.getColumnFamilies(d.getClass());
+		for (String family : families) {
+			byte[] bFamily = Bytes.toBytes(family);
+			g.addFamily(bFamily);
+		}
+		g.setMaxVersions();
+		Result r = table.get(g);
+		return toEntity(r);
+	}
 
 	/**
 	 * Get the native scan.
@@ -396,12 +400,12 @@ public abstract class HClient<D> implements Closeable {
 	public abstract Put toPut(D d);
 	
 	/**
-	 * row to data store, simple version
+	 * row to entity, simple version
 	 * 
 	 * @param r result
-	 * @return data store entity
+	 * @return the entity
 	 */
-	public abstract D toDataStore(Result r);
+	public abstract D toEntity(Result r);
 	
 	/**
 	 * Delete one row.
@@ -424,7 +428,10 @@ public abstract class HClient<D> implements Closeable {
 	 * @param d data store
 	 * @throws IOException
 	 */
-	public abstract void delete(D d) throws IOException;
+	public void delete(D d) throws IOException {
+		byte[] rowkey = toRowkey(d);
+		delete(rowkey);
+	}
 	
 	/**
 	 * Put data into HBase table.
@@ -516,7 +523,7 @@ public abstract class HClient<D> implements Closeable {
 				// record between the offset and limit
 				Text outKey = new Text(Bytes.toString(key.get()));
 				Text outValue = EMPTY_TEXT;
-				Object d = _hclient.toDataStore(value.iterator().next());				
+				Object d = _hclient.toEntity(value.iterator().next());				
 				outValue = new Text(d.toString());
 				context.write(outKey, outValue);
 

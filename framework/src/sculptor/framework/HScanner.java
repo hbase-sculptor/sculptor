@@ -30,7 +30,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
  * 
  * @param <D> the type returned with iteration
  */
-public class HScanner<D> implements Closeable {
+public class HScanner<D extends HEntity> implements Closeable {
 	protected HClient<D> client;
 	protected ResultScanner rs;
 	protected boolean closed = false;
@@ -67,7 +67,7 @@ public class HScanner<D> implements Closeable {
 		Result[] rows = rs.next(nbRows);
 		List<D> resultSets = new ArrayList<D>();
 		for (Result r : rows) {
-			D ds = client.toDataStore(r);
+			D ds = client.toEntity(r);
 			if (ds != null) {
 				resultSets.add(ds);
 			}
@@ -88,7 +88,7 @@ public class HScanner<D> implements Closeable {
 				if (r == null) {
 					return false;
 				}
-				next = client.toDataStore(r);
+				next = client.toEntity(r);
 				return next != null;
 				
 			} catch (IOException e) {

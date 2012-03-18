@@ -18,6 +18,7 @@
 package sculptor.framework;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * HBase上のテーブルに紐づいたクラスを定義
@@ -30,6 +31,8 @@ public class HClassDescriptor {
 	String entityClassName;
 	/** 紐づいているテーブル名 */
 	String table;
+	/** List of column family */
+	Set<String> columnFamilies;
 	/** フィールドのリスト */
 	List<HFieldDescriptor> hFieldDescriptors;
 
@@ -67,6 +70,10 @@ public class HClassDescriptor {
 	 */
 	public List<HFieldDescriptor> gethFieldDescriptors() {
 		return hFieldDescriptors;
+	}
+	
+	public Set<String> getColumnFamilies() {
+		return columnFamilies;
 	}
 
 }

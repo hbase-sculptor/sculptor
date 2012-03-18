@@ -20,8 +20,9 @@ package sculptor.framework;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -69,7 +70,21 @@ public class HEntity implements Serializable {
 		}
 
 		return hFields;
-
+	}
+	
+	/**
+	 * Get all column families.
+	 * 
+	 * @param clazz the entity class
+	 * @return Set contains all column families
+	 */
+	public static Set<String> getColumnFamilies(Class<? extends HEntity> clazz) {
+		List<HFieldDescriptor> hfields = getFields(clazz);
+		Set<String> columnFamilies = new HashSet<String>();
+		for (HFieldDescriptor hfield : hfields) {
+			columnFamilies.add(hfield.family);
+		}
+		return columnFamilies;
 	}
 	
 	/**

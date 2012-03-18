@@ -56,7 +56,6 @@ include Out;
 eputs $title;
 
 import 'sculptor.framework.HCompareOp'
-import 'sculptor.framework.util.ClassUtils'
 import 'sculptor.framework.Sculptor'
 
 #できるだけグローバルなんは避けたいけど、とりあえず
@@ -78,7 +77,6 @@ $fieldNameHash = Hash.new;
 Sculptor.initialize($SCULPTOR_ROOT)
 
 # Initialize tables from entities
-# tableClassNameList = ClassUtils.getJavaClasses(DATASTORE_PACKAGE, sculptorJar);
 for table in Sculptor.descriptors.keySet()
     eputs "Loading " + table + "...";
     $tableNameList << table;

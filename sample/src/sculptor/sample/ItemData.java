@@ -23,7 +23,7 @@ import sculptor.framework.annotation.Rowkey;
 import sculptor.framework.annotation.Table;
 
 /**
- * Ranking System用商品データ
+ * The entity class for sc_item_data table in HBase.
  * 
  */
 @Table(name = "sc_item_data")
