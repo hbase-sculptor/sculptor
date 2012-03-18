@@ -67,7 +67,7 @@ $process_mode = ProcessMode::NORMAL;
 log_level = org.apache.log4j.Level::ERROR
 org.apache.log4j.Logger.getLogger("org.apache.zookeeper").setLevel(log_level)
 org.apache.log4j.Logger.getLogger("org.apache.hadoop").setLevel(log_level)
-org.apache.log4j.Logger.getLogger("sculptor").setLevel(log_level)
+# org.apache.log4j.Logger.getLogger("sculptor").setLevel(log_level)
 
 $tableNameList = [];
 $fieldNameList = [];

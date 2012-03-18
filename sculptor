@@ -23,7 +23,12 @@ bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
 HBASE_HOME=/usr/local/hbase/current
-HBASE_CLASSPATH=$HBASE_CLASSPATH:$bin/sculptor-0.0.1.jar
+
+# add sculptor.jar to HBase classpath
+for jar in $bin/sculptor-*.jar
+do
+    HBASE_CLASSPATH=$HBASE_CLASSPATH:$jar
+done
 
 # add user defined libraries
 if [ -z "$SCULPTOR_AUXLIB_PATH" ]; then
