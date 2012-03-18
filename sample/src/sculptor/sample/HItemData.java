@@ -19,7 +19,6 @@ package sculptor.sample;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -382,44 +381,6 @@ public class HItemData extends HClient<ItemData> {
 
 		public ItemDataScanner(HClient<ItemData> client, ResultScanner rs) {
 			super(client, rs);
-		}
-	}
-
-	public static void main(String[] args) {
-		HItemData hi = null;
-		try {
-			byte b0 = ByteArray.b0;
-
-			// for unit test
-			int shopID = 48;
-			int itemID = 51;
-			byte[] rowkey = encodeRowkey(shopID, itemID);
-
-			byte[] expected = new byte[] { b0, b0, b0, ByteArray.b1, ByteArray.bg,
-					b0, b0, b0, b0, b0, b0, ByteArray.b1, ByteArray.bj };
-			assert (Bytes.equals(rowkey, expected));
-
-			String decoded = decodeRowkey(rowkey);
-			assert ("48-51".equals(decoded));
-			
-			hi = new HItemData();
-			ItemData id = new ItemData();
-			id.shopID = 235063;
-			Map<String, HCompareOp> ops = new HashMap<String, HCompareOp>();
-			ops.put("shop_id", HCompareOp.EQUAL);
-			HScanner<ItemData> scanner = hi.scan(id, ops);
-			assert (scanner.hasNext());
-			if (scanner.hasNext()) {
-				System.out.println(scanner.next());
-			}
-			
-			System.out.println("unit test passed");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (hi != null) {
-				hi.close();
-			}
 		}
 	}
 }

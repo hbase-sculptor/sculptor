@@ -22,7 +22,10 @@ import java.io.FileReader;
 
 import junit.framework.TestCase;
 
+import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
+
+import sculptor.framework.util.ByteArray;
 
 public class HItemDataTest extends TestCase {
 
@@ -42,13 +45,25 @@ public class HItemDataTest extends TestCase {
 	}
 	
 	@Test
-	public void testScan() {
-		// TODO
+	public void testEncodeRowkey() {
+		byte b0 = ByteArray.b0;
+
+		int shopID = 48;
+		int itemID = 51;
+		byte[] rowkey = HItemData.encodeRowkey(shopID, itemID);
+
+		byte[] expected = new byte[] { b0, b0, b0, ByteArray.b1, ByteArray.bg,
+				b0, b0, b0, b0, b0, b0, ByteArray.b1, ByteArray.bj };
+		assertEquals(true, Bytes.equals(rowkey, expected));
 	}
 	
 	@Test
-	public void testGetRawScan() {
-		// TODO
+	public void testDecodeRowkey() {
+		int shopID = 48;
+		int itemID = 51;
+		byte[] rowkey = HItemData.encodeRowkey(shopID, itemID);
+		String decoded = HItemData.decodeRowkey(rowkey);
+		assertEquals("48-51", decoded);
 	}
 	
 	// TODO add test case
