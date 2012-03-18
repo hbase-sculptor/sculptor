@@ -33,46 +33,76 @@ import sculptor.framework.annotation.Table;
  * 
  */
 public class Sculptor {
-	
+
 	private static Log log = LogFactory.getLog(Sculptor.class);
 	public static File sculptorRoot;
-	
+
 	public static Map<String, Class<? extends HEntity>> entities;
 	public static Map<String, Class<? extends HClient>> clients;
 	public static Map<String, HClassDescriptor> descriptors;
-	
+
+	/**
+	 * Initialize Sculptor.
+	 * 
+	 * @param root
+	 *            the root path of Sculptor
+	 * @throws Exception
+	 *             Something wrong during the initialization.
+	 */
 	public static void initialize(String root) throws Exception {
 		try {
 			sculptorRoot = new File(root);
-			
+
 			entities = new TreeMap<String, Class<? extends HEntity>>();
 			clients = new TreeMap<String, Class<? extends HClient>>();
 			descriptors = new TreeMap<String, HClassDescriptor>();
-			
+
 			String tables = sculptorRoot.getAbsolutePath() + "/conf/tables";
 			String tableDefine;
 			BufferedReader br = new BufferedReader(new FileReader(tables));
 			while ((tableDefine = br.readLine()) != null) {
-				String[] clientAndEntity = tableDefine.split("\\s+");
-				
+				if ("".equals(tableDefine.trim())
+						|| tableDefine.startsWith("#")) {
+					// ignore empty or comment lines
+					continue;
+				}
+				String[] mapping = tableDefine.split(":");
+				if (mapping.length < 3) {
+					throw new Exception("Wrong table mapping: " + tableDefine);
+				}
+
+				// table name
+				String tableName = mapping[0].trim();
+				log.info(String.format("Loading table %s...", tableName));
+
 				// load entity
-				Class entityClass = Class.forName(clientAndEntity[0]);
+				Class entityClass = Class.forName(mapping[1].trim());
 				HClassDescriptor descriptor = HEntity.getClassInfo(entityClass);
-				log.info(String.format("Loading table %s...", descriptor.table));
+				if (!tableName.equals(descriptor.table)) {
+					throw new Exception(
+							String.format(
+									"Wrong HEntity table annotation, expected: %s, actual: %s",
+									tableName, descriptor.table));
+				}
 
 				// load client
-				Class clientClass = Class.forName(clientAndEntity[1]);
-				String tableName = ((Table) clientClass.getAnnotation(Table.class)).name();
-				if (!tableName.equals(descriptor.table)) {
-					throw new Exception("Entity and client implmentation should be associated with same table.");
+				String client = mapping[2].trim();
+				Class clientClass = Class.forName(client);
+				String annotationTableName = ((Table) clientClass
+						.getAnnotation(Table.class)).name();
+				if (!tableName.equals(annotationTableName)) {
+					throw new Exception(
+							String.format(
+									"Wrong HClient table annotation, expected: %s, actual: %s",
+									tableName, annotationTableName));
 				}
-				descriptor.clientClassName = clientAndEntity[1];
-				
+				descriptor.clientClassName = client;
+
 				entities.put(tableName, entityClass);
 				clients.put(tableName, clientClass);
 				descriptors.put(tableName, descriptor);
 			}
-			
+
 		} catch (Exception e) {
 			log.error("Can not initialize Sculptor.", e);
 			throw e;
