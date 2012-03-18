@@ -38,13 +38,6 @@ APACHE_PACKAGE = "org.apache.";
 require CLAASES_DIR + 'common/String.rb'
 require CLAASES_DIR + 'commands/CommandHistory.rb';
 
-#LIB_DIR直下のjarファイルをぜんぶrequire
-Dir::entries(LIB_DIR).each do |jarFile|
-  if (jarFile.endsWith(".jar"))
-    require LIB_DIR + jarFile;
-  end
-end
-
 require CLAASES_DIR + 'Util.rb'
 require CLAASES_DIR + 'Query.rb'
 require CONST_DIR + 'ViewMode.rb'
