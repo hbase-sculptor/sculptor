@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -239,7 +238,7 @@ public abstract class HClient<D extends HEntity> implements Closeable {
 			return null;
 		}
 		Get g = new Get(rowkey);
-		Set<String> families = HEntity.getColumnFamilies(d.getClass());
+		String[] families = Sculptor.descriptors.get(tableName).columnFamilies;
 		for (String family : families) {
 			byte[] bFamily = Bytes.toBytes(family);
 			g.addFamily(bFamily);

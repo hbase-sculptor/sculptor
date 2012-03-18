@@ -20,7 +20,7 @@
     <!-- some variables used -->
     <property name="lib.dir" value="lib" />
     <property name="build.dir" value="build" />
-    <property name="version" value="0.0.1" />
+    <property name="version" value="0.1.0" />
      
     <!-- ================================= 
           target: resolve              

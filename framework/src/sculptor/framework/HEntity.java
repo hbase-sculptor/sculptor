@@ -50,6 +50,7 @@ public class HEntity implements Serializable {
 		hClassDescriptor.entityClassName = clazz.getCanonicalName();
 		hClassDescriptor.table = clazz.getAnnotation(Table.class).name();
 		hClassDescriptor.hFieldDescriptors = getFields(clazz);
+		hClassDescriptor.columnFamilies = getColumnFamilies(clazz);
 
 		return hClassDescriptor;
 	}
@@ -78,13 +79,15 @@ public class HEntity implements Serializable {
 	 * @param clazz the entity class
 	 * @return Set contains all column families
 	 */
-	public static Set<String> getColumnFamilies(Class<? extends HEntity> clazz) {
+	public static String[] getColumnFamilies(Class<? extends HEntity> clazz) {
 		List<HFieldDescriptor> hfields = getFields(clazz);
 		Set<String> columnFamilies = new HashSet<String>();
 		for (HFieldDescriptor hfield : hfields) {
-			columnFamilies.add(hfield.family);
+			if (hfield.family != null) {
+				columnFamilies.add(hfield.family);
+			}
 		}
-		return columnFamilies;
+		return columnFamilies.toArray(new String[0]);
 	}
 	
 	/**
