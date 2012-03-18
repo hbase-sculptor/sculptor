@@ -21,6 +21,7 @@
 #Sculptorのメインスクリプト
 #
 require 'etc'
+require 'pp'
 
 $userName = Etc.getlogin;
 
@@ -93,15 +94,10 @@ while (true)
       end
     end
   rescue SyntaxError => e
-    eputs "不正な値が入力されました";
-  rescue NativeException => e
-    eputs "apiエラーです";
-    eputs e.cause
-  rescue HBaseClientException => e
-    eputs e.getMessage();
+    eputs "Command syntax error.";
   rescue => e
-    # TODO エラーハンドリング
-    p e;
+    pp e;
+    pp e.backtrace
   end
   #-eならばループしない
           if(ARGV[0]) then
